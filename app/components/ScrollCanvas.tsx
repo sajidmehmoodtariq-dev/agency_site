@@ -1,11 +1,19 @@
 "use client";
 
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useCallback } from "react";
+import Lenis from "lenis";
 
 interface ScrollCanvasProps {
   totalFrames?: number;
   containerRef: React.RefObject<HTMLDivElement | null>;
   onFrameUpdate?: (frameIndex: number, progress: number) => void;
+}
+
+interface CoverDimensions {
+  renderW: number;
+  renderH: number;
+  shiftX: number;
+  shiftY: number;
 }
 
 export default function ScrollCanvas({
@@ -21,6 +29,15 @@ export default function ScrollCanvas({
   const lastRenderedIndexRef = useRef<number>(-1);
   const animationFrameIdRef = useRef<number | null>(null);
   const isReducedMotionRef = useRef<boolean>(false);
+  const coverDimensionsRef = useRef<CoverDimensions>({
+    renderW: 0,
+    renderH: 0,
+    shiftX: 0,
+    shiftY: 0,
+  });
+  const isVisibleRef = useRef<boolean>(true);
+  const lastTimeRef = useRef<number>(performance.now());
+  const lenisRef = useRef<Lenis | null>(null);
 
   // Helper to format frame path
   const getFrameUrl = useCallback((index: number) => {
@@ -28,37 +45,44 @@ export default function ScrollCanvas({
     return `/frames/frame-${padded}.png`;
   }, []);
 
-  // Draw a specific frame onto the canvas using object-fit: cover math
-  const drawImageToCanvas = useCallback(
-    (img: HTMLImageElement) => {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-      const ctx = canvas.getContext("2d", { alpha: false });
-      if (!ctx) return;
+  // Pre-calculate cover dimensions once on resize to avoid per-frame math
+  const recalculateCoverDimensions = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
 
-      const cw = canvas.width;
-      const ch = canvas.height;
-      const iw = img.naturalWidth || img.width;
-      const ih = img.naturalHeight || img.height;
+    const cw = canvas.width;
+    const ch = canvas.height;
+    // Known native frame dimensions (1920 x 1080)
+    const iw = 1920;
+    const ih = 1080;
 
-      if (!iw || !ih) return;
+    const hRatio = cw / iw;
+    const vRatio = ch / ih;
+    const ratio = Math.max(hRatio, vRatio);
 
-      // Cover aspect ratio
-      const hRatio = cw / iw;
-      const vRatio = ch / ih;
-      const ratio = Math.max(hRatio, vRatio);
+    const renderW = Math.round(iw * ratio);
+    const renderH = Math.round(ih * ratio);
+    const shiftX = Math.round((cw - renderW) / 2);
+    const shiftY = Math.round((ch - renderH) / 2);
 
-      const renderW = iw * ratio;
-      const renderH = ih * ratio;
-      const shiftX = (cw - renderW) / 2;
-      const shiftY = (ch - renderH) / 2;
+    coverDimensionsRef.current = { renderW, renderH, shiftX, shiftY };
+  }, []);
 
-      ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = "high";
-      ctx.drawImage(img, 0, 0, iw, ih, shiftX, shiftY, renderW, renderH);
-    },
-    []
-  );
+  // High-performance canvas paint with precomputed coordinates
+  const drawImageToCanvas = useCallback((img: HTMLImageElement) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d", {
+      alpha: false,
+      desynchronized: true,
+    });
+    if (!ctx) return;
+
+    const { renderW, renderH, shiftX, shiftY } = coverDimensionsRef.current;
+    if (renderW <= 0 || renderH <= 0) return;
+
+    ctx.drawImage(img, shiftX, shiftY, renderW, renderH);
+  }, []);
 
   // Render the current frame or the nearest loaded fallback frame
   const renderFrame = useCallback(
@@ -68,7 +92,7 @@ export default function ScrollCanvas({
         Math.max(1, Math.round(frameIndex))
       );
 
-      // Try exact frame
+      // Fast path: exact frame loaded and ready
       const exactImg = imagesRef.current[roundedIndex];
       if (exactImg && loadedFlagsRef.current[roundedIndex]) {
         if (lastRenderedIndexRef.current !== roundedIndex) {
@@ -78,7 +102,7 @@ export default function ScrollCanvas({
         return;
       }
 
-      // If exact frame not loaded yet, find nearest loaded frame to eliminate flicker
+      // Fallback path: find nearest loaded frame to eliminate flicker
       let bestIndex = -1;
       let minDistance = Infinity;
       for (let i = 1; i <= totalFrames; i++) {
@@ -87,6 +111,7 @@ export default function ScrollCanvas({
           if (dist < minDistance) {
             minDistance = dist;
             bestIndex = i;
+            if (dist <= 1) break; // Close enough to avoid full scan
           }
         }
       }
@@ -112,15 +137,14 @@ export default function ScrollCanvas({
     if (canvas.width !== newWidth || canvas.height !== newHeight) {
       canvas.width = newWidth;
       canvas.height = newHeight;
-      // Force repaint
+      recalculateCoverDimensions();
       lastRenderedIndexRef.current = -1;
       renderFrame(currentFrameRef.current);
     }
-  }, [renderFrame]);
+  }, [recalculateCoverDimensions, renderFrame]);
 
-  // Main continuous render / lerp loop
+  // Main continuous render / lerp loop with delta-time normalization
   useEffect(() => {
-    // Check prefers-reduced-motion
     if (typeof window !== "undefined") {
       const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
       isReducedMotionRef.current = mediaQuery.matches;
@@ -131,23 +155,32 @@ export default function ScrollCanvas({
     }
 
     let isRunning = true;
+    lastTimeRef.current = performance.now();
 
-    const tick = () => {
+    const tick = (now: number) => {
       if (!isRunning) return;
 
-      if (isReducedMotionRef.current) {
-        currentFrameRef.current = targetFrameRef.current;
-      } else {
-        // Silky smooth Apple-style lerp interpolation
-        const diff = targetFrameRef.current - currentFrameRef.current;
-        if (Math.abs(diff) > 0.005) {
-          currentFrameRef.current += diff * 0.12;
-        } else {
+      const dt = Math.min((now - lastTimeRef.current) / 1000, 0.1);
+      lastTimeRef.current = now;
+
+      // Only animate if the hero is visible on screen
+      if (isVisibleRef.current) {
+        if (isReducedMotionRef.current) {
           currentFrameRef.current = targetFrameRef.current;
+        } else {
+          // Delta-time normalized exponential smoothing (Apple ProMotion 120Hz ready)
+          const damping = 1 - Math.exp(-14 * dt);
+          const diff = targetFrameRef.current - currentFrameRef.current;
+          if (Math.abs(diff) > 0.005) {
+            currentFrameRef.current += diff * damping;
+          } else {
+            currentFrameRef.current = targetFrameRef.current;
+          }
         }
+
+        renderFrame(currentFrameRef.current);
       }
 
-      renderFrame(currentFrameRef.current);
       animationFrameIdRef.current = requestAnimationFrame(tick);
     };
 
@@ -161,76 +194,67 @@ export default function ScrollCanvas({
     };
   }, [renderFrame]);
 
-  // Progressive image preloader
+  // Progressive image preloader with asynchronous off-thread decode
   useEffect(() => {
     imagesRef.current = new Array(totalFrames + 1).fill(null);
     loadedFlagsRef.current = new Array(totalFrames + 1).fill(false);
 
-    // 1. Immediately preload Frame 1 for zero-wait initial render
-    const frame1 = new window.Image();
-    frame1.src = getFrameUrl(1);
-    imagesRef.current[1] = frame1;
-    frame1.onload = () => {
-      loadedFlagsRef.current[1] = true;
-      updateCanvasDimensions();
-      renderFrame(1);
+    const loadImage = (index: number): Promise<void> => {
+      return new Promise((resolve) => {
+        const img = new window.Image();
+        img.src = getFrameUrl(index);
+        imagesRef.current[index] = img;
+
+        img.onload = async () => {
+          try {
+            // Asynchronously decodes image off the main UI thread!
+            if ("decode" in img) {
+              await img.decode();
+            }
+          } catch {
+            // Fallback gracefully
+          }
+          loadedFlagsRef.current[index] = true;
+          if (index === 1) {
+            updateCanvasDimensions();
+            renderFrame(1);
+          }
+          resolve();
+        };
+
+        img.onerror = () => resolve();
+      });
     };
 
-    // 2. Preload remaining frames progressively in batches
-    const loadRemainingFrames = () => {
-      // Step A: Preload key milestones first (every 5th frame)
-      const keyframes: number[] = [];
-      for (let i = 5; i <= totalFrames; i += 5) {
-        keyframes.push(i);
-      }
-
-      keyframes.forEach((index) => {
-        if (!imagesRef.current[index]) {
-          const img = new window.Image();
-          img.src = getFrameUrl(index);
-          imagesRef.current[index] = img;
-          img.onload = () => {
-            loadedFlagsRef.current[index] = true;
-          };
-        }
+    // Step 1: Preload Frame 1 immediately
+    loadImage(1).then(() => {
+      // Step 2: Preload milestone keyframes across the sequence
+      const milestones = [15, 30, 45, 60, 75, 90, 105, 120, 135, 150];
+      milestones.forEach((idx) => {
+        if (!imagesRef.current[idx]) loadImage(idx);
       });
 
-      // Step B: Progressively fill in the rest
-      let currentIndex = 2;
-      const loadNextBatch = () => {
-        const batchSize = 6;
-        let loadedInBatch = 0;
+      // Step 3: Stream all remaining frames progressively with concurrency
+      let nextIndex = 2;
+      const concurrency = 6;
+      let activeLoads = 0;
 
-        while (currentIndex <= totalFrames && loadedInBatch < batchSize) {
-          const idx = currentIndex;
-          currentIndex++;
+      const loadNext = () => {
+        while (activeLoads < concurrency && nextIndex <= totalFrames) {
+          const idx = nextIndex++;
           if (!imagesRef.current[idx]) {
-            const img = new window.Image();
-            img.src = getFrameUrl(idx);
-            imagesRef.current[idx] = img;
-            img.onload = () => {
-              loadedFlagsRef.current[idx] = true;
-            };
-            loadedInBatch++;
-          }
-        }
-
-        if (currentIndex <= totalFrames) {
-          if ("requestIdleCallback" in window) {
-            (window as any).requestIdleCallback(loadNextBatch, { timeout: 200 });
-          } else {
-            setTimeout(loadNextBatch, 30);
+            activeLoads++;
+            loadImage(idx).then(() => {
+              activeLoads--;
+              loadNext();
+            });
           }
         }
       };
 
-      setTimeout(loadNextBatch, 50);
-    };
+      loadNext();
+    });
 
-    // Start loading subsequent frames
-    loadRemainingFrames();
-
-    // Initial resize
     updateCanvasDimensions();
     window.addEventListener("resize", updateCanvasDimensions);
 
@@ -239,9 +263,21 @@ export default function ScrollCanvas({
     };
   }, [totalFrames, getFrameUrl, renderFrame, updateCanvasDimensions]);
 
-  // Scroll listener mapped directly to container progress
+  // Scroll mapping & Lenis smooth scroll engine
   useEffect(() => {
-    const handleScroll = () => {
+    // Initialize Lenis momentum smooth scrolling
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: "vertical",
+      gestureOrientation: "vertical",
+      smoothWheel: true,
+      wheelMultiplier: 1.0,
+      touchMultiplier: 1.5,
+    });
+    lenisRef.current = lenis;
+
+    const handleScrollUpdate = () => {
       if (!containerRef.current) return;
 
       const rect = containerRef.current.getBoundingClientRect();
@@ -251,11 +287,9 @@ export default function ScrollCanvas({
 
       if (totalScrollableDistance <= 0) return;
 
-      // Scroll progress strictly from 0 to 1
       const rawProgress = -rect.top / totalScrollableDistance;
       const progress = Math.min(Math.max(rawProgress, 0), 1);
 
-      // Map progress to frame index: 0% -> 1, 100% -> totalFrames
       const target = 1 + progress * (totalFrames - 1);
       targetFrameRef.current = target;
 
@@ -264,29 +298,68 @@ export default function ScrollCanvas({
       }
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    // Run once on mount to establish position
-    handleScroll();
+    lenis.on("scroll", handleScrollUpdate);
+    window.addEventListener("scroll", handleScrollUpdate, { passive: true });
+
+    // RAF loop for Lenis
+    let lenisRafId: number;
+    const lenisTick = (time: number) => {
+      lenis.raf(time);
+      lenisRafId = requestAnimationFrame(lenisTick);
+    };
+    lenisRafId = requestAnimationFrame(lenisTick);
+
+    // Initial sync
+    handleScrollUpdate();
+
+    // IntersectionObserver to suspend canvas when off-screen
+    let observer: IntersectionObserver | null = null;
+    if (containerRef.current && typeof IntersectionObserver !== "undefined") {
+      observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            isVisibleRef.current = entry.isIntersecting;
+          });
+        },
+        { threshold: 0.01 }
+      );
+      observer.observe(containerRef.current);
+    }
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      if (lenisRef.current) {
+        lenisRef.current.destroy();
+      }
+      cancelAnimationFrame(lenisRafId);
+      window.removeEventListener("scroll", handleScrollUpdate);
+      if (observer) observer.disconnect();
     };
   }, [containerRef, totalFrames, onFrameUpdate]);
 
   return (
-    <div className="absolute inset-0 w-full h-full pointer-events-none select-none">
+    <div
+      className="absolute inset-0 w-full h-full pointer-events-none select-none"
+      style={{
+        willChange: "transform",
+        transform: "translate3d(0, 0, 0)",
+        contain: "paint layout",
+      }}
+    >
       {/* Pinned full-screen HTML5 Canvas */}
       <canvas
         ref={canvasRef}
         className="w-full h-full object-cover block"
+        style={{
+          imageRendering: "auto",
+        }}
       />
 
-      {/* Cinematic dark luxury tone overlays to eliminate visible edges */}
+      {/* Cinematic dark luxury tone overlays */}
       <div className="absolute inset-0 bg-gradient-to-t from-[#050508] via-transparent to-[#050508]/80 pointer-events-none" />
       <div className="absolute inset-0 bg-gradient-to-r from-[#050508]/90 via-[#050508]/30 to-[#050508]/75 pointer-events-none" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_35%,#050508_95%)] pointer-events-none" />
-      
-      {/* Subtle deep gold/warm luxury ambient lighting matching visual direction */}
+
+      {/* Deep gold/warm luxury ambient lighting */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_70%,rgba(217,119,6,0.06),transparent_60%)] pointer-events-none" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_35%,rgba(168,85,247,0.08),transparent_55%)] pointer-events-none" />
     </div>

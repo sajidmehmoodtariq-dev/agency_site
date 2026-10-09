@@ -72,8 +72,19 @@ export default function Home() {
   const [customPrompt, setCustomPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedSuccess, setGeneratedSuccess] = useState(false);
-  const [scrollFrame, setScrollFrame] = useState(1);
-  const [scrollPct, setScrollPct] = useState(0);
+
+  // Performance Optimization: Direct DOM refs to eliminate React re-renders during 120Hz scrolling
+  const frameBadgeRef = useRef<HTMLSpanElement | null>(null);
+  const scrollPctRef = useRef<HTMLSpanElement | null>(null);
+
+  const handleFrameUpdate = React.useCallback((frame: number, progress: number) => {
+    if (frameBadgeRef.current) {
+      frameBadgeRef.current.textContent = `Frame ${String(frame).padStart(3, "0")} / 150`;
+    }
+    if (scrollPctRef.current) {
+      scrollPctRef.current.textContent = `${Math.round(progress * 100)}%`;
+    }
+  }, []);
 
   const activeSlide = SLIDES[activeSlideIndex];
 
@@ -104,10 +115,7 @@ export default function Home() {
           <ScrollCanvas
             totalFrames={150}
             containerRef={heroContainerRef}
-            onFrameUpdate={(frame, progress) => {
-              setScrollFrame(frame);
-              setScrollPct(Math.round(progress * 100));
-            }}
+            onFrameUpdate={handleFrameUpdate}
           />
 
           {/* OVERSIZED BRAND TEXT (Watermark exactly as specified) */}
@@ -341,14 +349,19 @@ export default function Home() {
                       <Cpu className="w-3.5 h-3.5 text-purple-400" />
                       Sequence Engine
                     </span>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-300 border border-orange-500/30">
-                      Frame {String(scrollFrame).padStart(3, "0")} / 150
+                    <span
+                      ref={frameBadgeRef}
+                      className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-300 border border-orange-500/30"
+                    >
+                      Frame 001 / 150
                     </span>
                   </div>
                   <div className="pt-3 space-y-2.5 font-mono text-xs">
                     <div className="flex justify-between text-zinc-300">
                       <span className="text-zinc-500">Scroll Depth:</span>
-                      <span className="text-purple-300">{scrollPct}%</span>
+                      <span ref={scrollPctRef} className="text-purple-300">
+                        0%
+                      </span>
                     </div>
                     <div className="flex justify-between text-zinc-300">
                       <span className="text-zinc-500">Architecture:</span>
