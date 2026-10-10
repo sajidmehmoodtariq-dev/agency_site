@@ -1,26 +1,33 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Playfair_Display } from "next/font/google";
+import { Syne, Instrument_Serif, JetBrains_Mono } from "next/font/google";
+import SmoothScroll from "@/components/SmoothScroll";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const syne = Syne({
+  variable: "--font-syne",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const instrumentSerif = Instrument_Serif({
+  variable: "--font-serif",
   subsets: ["latin"],
+  weight: "400",
+  display: "swap",
 });
 
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-mono",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "DREAMFRAME — Next-Gen AI Image Generator",
-  description: "Transform visionary prompts into hyper-cinematic realities with state-of-the-art neural diffusion intelligence.",
+  title: "STUDIO 32 | Digital Engineering & Editorial Design",
+  description:
+    "Agency portfolio combining typography, 60fps smooth scrolling with Lenis, and synchronized GSAP ScrollTrigger animations.",
 };
 
 export default function RootLayout({
@@ -31,10 +38,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} h-full antialiased`}
+      className={`${syne.variable} ${instrumentSerif.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[#050508] text-[#e2e8f0] font-sans selection:bg-purple-500/30 selection:text-white">
-        {children}
+      <body className="min-h-full bg-matte-dark text-cream selection:bg-accent-vermilion selection:text-cream flex flex-col">
+        <SmoothScroll>{children}</SmoothScroll>
       </body>
     </html>
   );

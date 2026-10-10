@@ -1,116 +1,57 @@
 @import "tailwindcss";
 
-@theme inline {
-  --font-serif: var(--font-playfair), ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), monospace;
+@theme {
+  /* Editorial Color Palette */
+  --color-matte-dark: #0D0D0D;
+  --color-cream: #F8F8F8;
+  --color-accent-amber: #F7B928;
+  --color-accent-vermilion: #FF3E1D;
+
+  /* Aliased theme tokens */
+  --color-editorial-dark: #0D0D0D;
+  --color-editorial-cream: #F8F8F8;
+  --color-editorial-gold: #F7B928;
+  --color-editorial-flame: #FF3E1D;
+
+  /* Typography tokens */
+  --font-header: var(--font-syne), -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-serif: var(--font-serif), Georgia, "Times New Roman", serif;
+  --font-mono: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 :root {
-  --background: #050508;
-  --foreground: #ededed;
+  --background: #0D0D0D;
+  --foreground: #F8F8F8;
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
+  font-family: var(--font-header);
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom glow and glassmorphism utilities */
-.glass-panel {
-  background: rgba(18, 16, 28, 0.45);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+/* Editorial selection accent */
+::selection {
+  background-color: #FF3E1D;
+  color: #F8F8F8;
 }
 
-.glass-pill {
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
 }
 
-.text-glow-purple {
-  text-shadow: 0 0 30px rgba(168, 85, 247, 0.45), 0 0 60px rgba(147, 51, 234, 0.2);
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 55s linear infinite;
 }
 
-.text-glow-pink {
-  text-shadow: 0 0 30px rgba(244, 114, 182, 0.45), 0 0 60px rgba(217, 70, 239, 0.25);
-}
-
-.orange-purple-glow {
-  box-shadow: 0 0 35px -5px rgba(249, 115, 22, 0.4), 0 0 30px -8px rgba(168, 85, 247, 0.4);
-}
-
-.purple-lavender-glow {
-  box-shadow: 0 0 45px -8px rgba(168, 85, 247, 0.25), 0 0 60px -15px rgba(244, 114, 182, 0.2);
-}
-
-@keyframes pulseGlow {
-  0%, 100% {
-    opacity: 0.6;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.08);
-  }
-}
-
-.animate-pulse-glow {
-  animation: pulseGlow 3s ease-in-out infinite;
-}
-
-@keyframes floatSlow {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-8px);
-  }
-}
-
-.animate-float {
-  animation: floatSlow 6s ease-in-out infinite;
-}
-
-/* Infinite Marquee Animations */
-@keyframes marqueeLeft {
-  0% {
-    transform: translate3d(0, 0, 0);
-  }
-  100% {
-    transform: translate3d(-50%, 0, 0);
-  }
-}
-
-@keyframes marqueeRight {
-  0% {
-    transform: translate3d(-50%, 0, 0);
-  }
-  100% {
-    transform: translate3d(0, 0, 0);
-  }
-}
-
-.animate-marquee-left {
-  animation: marqueeLeft 32s linear infinite;
-  will-change: transform;
-}
-
-.animate-marquee-right {
-  animation: marqueeRight 32s linear infinite;
-  will-change: transform;
-}
-
-.marquee-container:hover .animate-marquee-left,
-.marquee-container:hover .animate-marquee-right {
-  animation-play-state: paused;
-}
-
-.marquee-mask {
-  mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
-  -webkit-mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+.animate-marquee-reverse {
+  display: flex;
+  width: max-content;
+  animation: marquee 55s linear infinite reverse;
 }
