@@ -43,8 +43,8 @@ export default function HeroSection() {
 
       // 2. Subtle organic floating oscillation for the badges
       gsap.to(badge1Ref.current, {
-        y: "+=12",
-        rotation: "+=1.5",
+        y: "+=8",
+        rotation: "+=1.2",
         duration: 2.8,
         repeat: -1,
         yoyo: true,
@@ -52,8 +52,8 @@ export default function HeroSection() {
       });
 
       gsap.to(badge2Ref.current, {
-        y: "-=14",
-        rotation: "-=1.8",
+        y: "-=10",
+        rotation: "-=1.4",
         duration: 3.2,
         repeat: -1,
         yoyo: true,
@@ -62,8 +62,8 @@ export default function HeroSection() {
       });
 
       gsap.to(badge3Ref.current, {
-        y: "+=10",
-        rotation: "-=1.2",
+        y: "+=8",
+        rotation: "-=1",
         duration: 2.6,
         repeat: -1,
         yoyo: true,
@@ -72,8 +72,8 @@ export default function HeroSection() {
       });
 
       gsap.to(badge4Ref.current, {
-        y: "-=12",
-        rotation: "+=2",
+        y: "-=8",
+        rotation: "+=1.5",
         duration: 3.0,
         repeat: -1,
         yoyo: true,
@@ -107,8 +107,8 @@ export default function HeroSection() {
         .to(
           badge1Ref.current,
           {
-            x: -120,
-            y: -80,
+            x: -80,
+            y: -60,
             opacity: 0,
             ease: "power1.inOut",
           },
@@ -117,8 +117,8 @@ export default function HeroSection() {
         .to(
           badge2Ref.current,
           {
-            x: 120,
-            y: -80,
+            x: 80,
+            y: -60,
             opacity: 0,
             ease: "power1.inOut",
           },
@@ -127,8 +127,8 @@ export default function HeroSection() {
         .to(
           badge3Ref.current,
           {
-            x: -120,
-            y: 80,
+            x: -80,
+            y: 60,
             opacity: 0,
             ease: "power1.inOut",
           },
@@ -137,8 +137,8 @@ export default function HeroSection() {
         .to(
           badge4Ref.current,
           {
-            x: 120,
-            y: 80,
+            x: 80,
+            y: 60,
             opacity: 0,
             ease: "power1.inOut",
           },
@@ -171,19 +171,19 @@ export default function HeroSection() {
         }}
       />
 
-      {/* Hero Section Container (Editorial Cream #FAF8F5 with Ink-Black Typography) */}
+      {/* Hero Section Container */}
       <section
         ref={heroContentRef}
         id="hero"
-        className="h-screen w-full relative overflow-hidden bg-[#FAF8F5] text-[#0D0D0D] flex flex-col justify-between pt-28 pb-12 px-6 md:px-12 select-none"
+        className="min-h-[100dvh] h-auto lg:h-screen w-full relative overflow-hidden bg-[#FAF8F5] text-[#0D0D0D] flex flex-col justify-between pt-20 sm:pt-24 lg:pt-28 pb-8 sm:pb-12 px-4 sm:px-8 md:px-12 select-none"
       >
         {/* Top Headline Row */}
-        <div className="w-full max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-end justify-between gap-6 z-10">
+        <div className="w-full max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-end justify-between gap-4 sm:gap-6 z-10">
           <div className="max-w-3xl">
-            <span className="font-mono text-xs uppercase tracking-widest text-[#E8A317] font-bold block mb-2">
+            <span className="font-mono text-[10px] sm:text-xs uppercase tracking-widest text-[#E8A317] font-bold block mb-2">
               // STUDIO 32 ARCHITECTURE
             </span>
-            <h1 className="font-serif text-5xl sm:text-6xl md:text-8xl tracking-tight text-[#0D0D0D] leading-[0.95]">
+            <h1 className="font-serif text-4xl sm:text-6xl md:text-8xl tracking-tight text-[#0D0D0D] leading-[0.98] sm:leading-[0.95]">
               Turn stores into high-velocity engines.
             </h1>
           </div>
@@ -195,73 +195,74 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* Center Stage: w-full max-w-5xl mx-auto h-[480px] */}
-        <div className="w-full max-w-5xl mx-auto h-[480px] flex items-center justify-center relative my-auto z-20">
-          {/* Badge 1: Top-Left (⚡ Sub-800ms LCP) */}
+        {/* Center Stage */}
+        <div className="w-full max-w-5xl mx-auto h-[340px] sm:h-[420px] md:h-[480px] flex items-center justify-center relative my-auto z-20">
+          {/* Badge 1: Top-Left */}
           <div
             ref={badge1Ref}
-            className="absolute top-4 sm:top-10 left-2 sm:left-6 md:left-12 z-30 bg-white text-black border border-black/10 shadow-xl px-4 py-3 rounded-xl text-xs font-mono font-bold flex items-center gap-2 hover:border-[#F7B928] transition-colors"
+            className="absolute top-1 sm:top-6 md:top-10 left-1 sm:left-6 md:left-12 z-30 bg-white/95 backdrop-blur-sm text-black border border-black/10 shadow-lg sm:shadow-xl px-2.5 sm:px-4 py-1.5 sm:py-3 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-mono font-bold flex items-center gap-1.5 sm:gap-2 hover:border-[#F7B928] transition-colors"
           >
-            <span className="text-[#E8A317] text-sm">⚡</span>
+            <span className="text-[#E8A317] text-xs sm:text-sm">⚡</span>
             <span>Sub-800ms LCP</span>
           </div>
 
-          {/* Badge 2: Top-Right (📦 Custom Liquid & Headless) */}
+          {/* Badge 2: Top-Right */}
           <div
             ref={badge2Ref}
-            className="absolute top-4 sm:top-10 right-2 sm:right-6 md:right-12 z-30 bg-white text-black border border-black/10 shadow-xl px-4 py-3 rounded-xl text-xs font-mono font-bold flex items-center gap-2 hover:border-[#F7B928] transition-colors"
+            className="absolute top-1 sm:top-6 md:top-10 right-1 sm:right-6 md:right-12 z-30 bg-white/95 backdrop-blur-sm text-black border border-black/10 shadow-lg sm:shadow-xl px-2.5 sm:px-4 py-1.5 sm:py-3 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-mono font-bold flex items-center gap-1.5 sm:gap-2 hover:border-[#F7B928] transition-colors"
           >
-            <span>📦</span>
-            <span>Custom Liquid & Headless</span>
+            <span>💎</span>
+            <span className="hidden xs:inline">Custom Liquid & Headless</span>
+            <span className="xs:hidden">Headless Ready</span>
           </div>
 
-          {/* Badge 3: Bottom-Left (📈 +180% Avg Conversion Lift) */}
+          {/* Badge 3: Bottom-Left */}
           <div
             ref={badge3Ref}
-            className="absolute bottom-4 sm:bottom-10 left-2 sm:left-6 md:left-12 z-30 bg-white text-black border border-black/10 shadow-xl px-4 py-3 rounded-xl text-xs font-mono font-bold flex items-center gap-2 hover:border-[#FF3E1D] transition-colors"
+            className="absolute bottom-1 sm:bottom-6 md:bottom-10 left-1 sm:left-6 md:left-12 z-30 bg-white/95 backdrop-blur-sm text-black border border-black/10 shadow-lg sm:shadow-xl px-2.5 sm:px-4 py-1.5 sm:py-3 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-mono font-bold flex items-center gap-1.5 sm:gap-2 hover:border-[#FF3E1D] transition-colors"
           >
             <span>📈</span>
-            <span className="text-[#FF3E1D] font-extrabold">+180% Avg Conversion Lift</span>
+            <span className="text-[#FF3E1D] font-extrabold">+180% Lift</span>
           </div>
 
-          {/* Badge 4: Bottom-Right (🛡️ Enterprise CI/CD) */}
+          {/* Badge 4: Bottom-Right */}
           <div
             ref={badge4Ref}
-            className="absolute bottom-4 sm:bottom-10 right-2 sm:right-6 md:right-12 z-30 bg-white text-black border border-black/10 shadow-xl px-4 py-3 rounded-xl text-xs font-mono font-bold flex items-center gap-2 hover:border-black/30 transition-colors"
+            className="absolute bottom-1 sm:bottom-6 md:bottom-10 right-1 sm:right-6 md:right-12 z-30 bg-white/95 backdrop-blur-sm text-black border border-black/10 shadow-lg sm:shadow-xl px-2.5 sm:px-4 py-1.5 sm:py-3 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-mono font-bold flex items-center gap-1.5 sm:gap-2 hover:border-black/30 transition-colors"
           >
             <span>🛡️</span>
             <span>Enterprise CI/CD</span>
           </div>
 
-          {/* Center Stage Element: w-72 h-80 bg-[#F7B928] rounded-3xl with High Contrast */}
+          {/* Center Stage Element */}
           <div
             ref={centerVisualRef}
-            className="relative w-72 h-80 bg-[#F7B928] rounded-3xl flex flex-col items-center justify-center text-black font-black text-2xl uppercase tracking-widest shadow-2xl shadow-[#F7B928]/35 transition-transform duration-300 p-6 overflow-hidden group border border-black/10"
+            className="relative w-56 h-64 sm:w-72 sm:h-80 bg-[#F7B928] rounded-2xl sm:rounded-3xl flex flex-col items-center justify-between text-black font-black uppercase tracking-widest shadow-2xl shadow-[#F7B928]/35 transition-transform duration-300 p-4 sm:p-6 overflow-hidden group border border-black/10"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-white/30 via-transparent to-black/15 pointer-events-none" />
 
-            <div className="w-full flex justify-between items-center font-mono text-[10px] text-black/70 tracking-normal pb-4 border-b border-black/15">
+            <div className="w-full flex justify-between items-center font-mono text-[9px] sm:text-[10px] text-black/70 tracking-normal pb-3 border-b border-black/15">
               <span>AG_ENGINE</span>
               <span className="flex items-center gap-1 font-bold text-black">
-                <span className="w-2 h-2 rounded-full bg-black animate-ping" />
+                <span className="w-1.5 h-1.5 rounded-full bg-black animate-ping" />
                 ACTIVE
               </span>
             </div>
 
-            {/* Central 3D Canvas / Element Placeholder */}
+            {/* Central 3D Canvas Placeholder */}
             <div className="my-auto flex flex-col items-center justify-center">
-              <div className="w-20 h-20 rounded-2xl bg-black text-[#F7B928] flex items-center justify-center text-3xl font-black mb-3 shadow-xl">
+              <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl bg-black text-[#F7B928] flex items-center justify-center text-2xl sm:text-3xl font-black mb-2 sm:mb-3 shadow-xl">
                 32
               </div>
-              <span className="text-xl font-extrabold tracking-widest text-black text-center">
+              <span className="text-base sm:text-xl font-extrabold tracking-widest text-black text-center">
                 ANTI-GRAVITY
               </span>
-              <span className="font-mono text-[10px] text-black/80 mt-1 tracking-normal font-semibold">
+              <span className="font-mono text-[9px] sm:text-[10px] text-black/80 mt-0.5 sm:mt-1 tracking-normal font-semibold">
                 3D CANVAS ENGINE
               </span>
             </div>
 
-            <div className="w-full flex justify-between items-center font-mono text-[10px] text-black/70 pt-4 border-t border-black/15">
+            <div className="w-full flex justify-between items-center font-mono text-[9px] sm:text-[10px] text-black/70 pt-3 border-t border-black/15">
               <span>FPS: 60.0</span>
               <span>ZERO_BLOAT</span>
             </div>
@@ -269,23 +270,23 @@ export default function HeroSection() {
         </div>
 
         {/* Bottom Bar: Dual CTA Buttons */}
-        <div className="w-full max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 z-10 pt-4 border-t border-black/10">
-          <div className="font-mono text-xs text-[#666] uppercase tracking-wider hidden sm:block">
-            SCROLL TO ENGAGE HORIZONTAL TRACK ↓
+        <div className="w-full max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 z-10 pt-3 sm:pt-4 border-t border-black/10">
+          <div className="font-mono text-[10px] sm:text-xs text-[#666] uppercase tracking-wider hidden sm:block">
+            SCROLL TO ENGAGE HORIZONTAL TRACK ➔
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col xs:flex-row items-center gap-2 sm:gap-4 w-full sm:w-auto">
             <button
               onClick={() => scrollTo("#case-studies")}
-              className="px-6 py-3 rounded-full bg-[#0D0D0D] text-white font-mono text-xs uppercase tracking-wider font-bold hover:bg-[#F7B928] hover:text-black transition-all duration-300 shadow-lg active:scale-95 cursor-pointer"
+              className="w-full xs:w-auto px-5 sm:px-6 py-2.5 sm:py-3 rounded-full bg-[#0D0D0D] text-white font-mono text-[11px] sm:text-xs uppercase tracking-wider font-bold hover:bg-[#F7B928] hover:text-black transition-all duration-300 shadow-lg active:scale-95 cursor-pointer text-center"
             >
-              View Client Case Studies ↓
+              Client Case Studies ➔
             </button>
             <button
               onClick={() => scrollTo("#audit")}
-              className="px-6 py-3 rounded-full border border-black/20 text-[#0D0D0D] font-mono text-xs uppercase tracking-wider font-semibold hover:border-black hover:bg-black/5 transition-all duration-300 active:scale-95 cursor-pointer"
+              className="w-full xs:w-auto px-5 sm:px-6 py-2.5 sm:py-3 rounded-full border border-black/20 text-[#0D0D0D] font-mono text-[11px] sm:text-xs uppercase tracking-wider font-semibold hover:border-black hover:bg-black/5 transition-all duration-300 active:scale-95 cursor-pointer text-center"
             >
-              Schedule Store Audit →
+              Schedule Store Audit ↗
             </button>
           </div>
         </div>

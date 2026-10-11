@@ -77,8 +77,7 @@ const reviewsList: ReviewCard[] = [
   },
 ];
 
-// Individual Interactive Folder Card with 3D Tilt & Tab Unclip
-function FolderCardItem({ item, index }: { item: ReviewCard; index: number }) {
+function FolderCardItem({ item }: { item: ReviewCard; index: number }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const tabRef = useRef<HTMLDivElement>(null);
   const quoteRef = useRef<HTMLParagraphElement>(null);
@@ -88,7 +87,11 @@ function FolderCardItem({ item, index }: { item: ReviewCard; index: number }) {
     const card = cardRef.current;
     if (!card) return;
 
-    // QuickTo physics setters
+    // Skip tilt on touch devices
+    if (typeof window !== "undefined" && window.matchMedia && window.matchMedia("(hover: none)").matches) {
+      return;
+    }
+
     const rotXTo = gsap.quickTo(card, "rotateX", { duration: 0.35, ease: "power2.out" });
     const rotYTo = gsap.quickTo(card, "rotateY", { duration: 0.35, ease: "power2.out" });
 
@@ -97,21 +100,18 @@ function FolderCardItem({ item, index }: { item: ReviewCard; index: number }) {
       const mouseX = e.clientX - (rect.left + rect.width / 2);
       const mouseY = e.clientY - (rect.top + rect.height / 2);
 
-      // Max rotational tilt ±6deg
       const rotX = (-mouseY / (rect.height / 2)) * 6;
       const rotY = (mouseX / (rect.width / 2)) * 6;
 
       rotXTo(rotX);
       rotYTo(rotY);
 
-      // Counter-shift dynamic drop shadow based on mouse angle
       const shadowX = Math.round(6 + (mouseX / rect.width) * 8);
       const shadowY = Math.round(6 + (mouseY / rect.height) * 10);
       card.style.boxShadow = `${shadowX}px ${shadowY}px 0px #000`;
     };
 
     const handleMouseEnter = () => {
-      // Kinetic folder tab unclip: tab translates -8px, scales 1.03
       if (tabRef.current) {
         gsap.to(tabRef.current, {
           y: -8,
@@ -120,7 +120,6 @@ function FolderCardItem({ item, index }: { item: ReviewCard; index: number }) {
           ease: "power2.out",
         });
       }
-      // Inner quote lifts subtly
       if (quoteRef.current) {
         gsap.to(quoteRef.current, {
           y: -2,
@@ -128,7 +127,6 @@ function FolderCardItem({ item, index }: { item: ReviewCard; index: number }) {
           ease: "power2.out",
         });
       }
-      // Status pill switches border to pure black
       if (badgeRef.current) {
         badgeRef.current.style.borderColor = "#000";
         badgeRef.current.style.backgroundColor = "rgba(0, 0, 0, 0.18)";
@@ -177,60 +175,57 @@ function FolderCardItem({ item, index }: { item: ReviewCard; index: number }) {
       className="folder-card-wrapper relative flex flex-col cursor-pointer will-change-transform"
       style={{ perspective: "1000px" }}
     >
-      {/* 3. The Tab: Authentic folder tab positioned at top left */}
+      {/* Folder Tab */}
       <div
         ref={tabRef}
-        className="w-36 h-7 bg-[#111] text-[#FAF8F5] text-[11px] font-mono font-bold tracking-wider uppercase px-3 py-1.5 rounded-t-lg flex items-center justify-between border-t border-x border-black will-change-transform select-none"
+        className="w-32 sm:w-36 h-7 bg-[#111] text-[#FAF8F5] text-[10px] sm:text-[11px] font-mono font-bold tracking-wider uppercase px-3 py-1.5 rounded-t-lg flex items-center justify-between border-t border-x border-black will-change-transform select-none"
       >
         <span>{item.tabLabel}</span>
         <span className="w-1.5 h-1.5 rounded-full bg-[#F7B928] animate-pulse" />
       </div>
 
-      {/* 2. The Body: Rich amber-yellow file folder surface with dynamic brutalist shadow */}
+      {/* Folder Body */}
       <div
         ref={cardRef}
-        className="bg-[#F7B928] text-black p-6 rounded-tr-xl rounded-b-xl border-2 border-black shadow-[6px_6px_0px_#000] flex flex-col justify-between min-h-[230px] will-change-transform"
+        className="bg-[#F7B928] text-black p-4 sm:p-6 rounded-tr-xl rounded-b-xl border-2 border-black shadow-[6px_6px_0px_#000] flex flex-col justify-between min-h-[210px] sm:min-h-[230px] will-change-transform"
         style={{ transformStyle: "preserve-3d" }}
       >
-        {/* Rating Row & Verified Badge */}
         <div>
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-black text-sm tracking-wider font-black">★★★★★</span>
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
+            <span className="text-black text-xs sm:text-sm tracking-wider font-black">★★★★★</span>
             <span
               ref={badgeRef}
-              className="px-2.5 py-0.5 rounded-md bg-black/10 border border-black/15 font-mono text-[9px] font-bold text-black uppercase transition-colors duration-200"
+              className="px-2 py-0.5 rounded-md bg-black/10 border border-black/15 font-mono text-[8px] sm:text-[9px] font-bold text-black uppercase transition-colors duration-200"
             >
-              VERIFIED DEPLOYMENT
+              VERIFIED
             </span>
           </div>
 
-          {/* High-Impact Bold Quote */}
           <p
             ref={quoteRef}
-            className="font-serif italic text-base md:text-lg font-bold text-black/95 leading-relaxed mb-6 will-change-transform"
+            className="font-serif italic text-sm sm:text-base md:text-lg font-bold text-black/95 leading-relaxed mb-4 sm:mb-6 will-change-transform"
           >
             &ldquo;{item.quote}&rdquo;
           </p>
         </div>
 
-        {/* Bottom Attribution Row */}
-        <div className="pt-4 border-t border-black/20 flex items-end justify-between gap-2">
+        {/* Attribution Row */}
+        <div className="pt-3 sm:pt-4 border-t border-black/20 flex items-end justify-between gap-2">
           <div>
-            <span className="font-header font-black text-sm block text-black">{item.author}</span>
-            <span className="font-mono text-[10px] text-black/75 font-semibold block uppercase">
+            <span className="font-header font-black text-xs sm:text-sm block text-black">{item.author}</span>
+            <span className="font-mono text-[9px] sm:text-[10px] text-black/75 font-semibold block uppercase">
               {item.role} • {item.storeName}
             </span>
           </div>
 
-          {/* External Store Link Pill */}
           <a
             href={item.storeUrl}
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
-            className="px-3 py-1.5 rounded-full bg-black text-[#F7B928] font-mono text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 hover:bg-white hover:text-black transition-colors shadow-sm"
+            className="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-black text-[#F7B928] font-mono text-[9px] sm:text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 hover:bg-white hover:text-black transition-colors shadow-sm flex-shrink-0"
           >
-            <span>Visit Store</span>
+            <span>Visit</span>
             <span className="text-xs">↗</span>
           </a>
         </div>
@@ -248,10 +243,8 @@ export default function FolderReviews() {
     gsap.registerPlugin(ScrollTrigger);
 
     const ctx = gsap.context(() => {
-      // 1. Scroll-Driven Stagger & Fan-Out Entrance
       const cards = gsap.utils.toArray<HTMLElement>(".folder-card-wrapper");
 
-      // Initial Fan-Out Deal States
       cards.forEach((card, i) => {
         const altRotate = i % 2 === 0 ? -3 : 3;
         gsap.set(card, {
@@ -262,7 +255,6 @@ export default function FolderReviews() {
         });
       });
 
-      // Animate cards onto grid like physical dossiers
       gsap.to(cards, {
         opacity: 1,
         y: 0,
@@ -278,7 +270,6 @@ export default function FolderReviews() {
         },
       });
 
-      // Top Ribbon: Angled at -2deg, sliding left at a calm, readable pace
       gsap.to(".top-tape-track", {
         xPercent: -50,
         duration: 55,
@@ -303,12 +294,12 @@ export default function FolderReviews() {
       id="reviews"
       className="relative w-full bg-[#FAF8F5] text-[#0D0D0D] select-none overflow-hidden"
     >
-      {/* 4. Top Ribbon Marquee: Angled at -2deg */}
+      {/* Top Ribbon Marquee */}
       <div
         ref={topTapeRef}
         className="relative w-[130vw] -ml-[15vw] overflow-hidden pointer-events-none select-none z-30 -rotate-2 -mb-6"
       >
-        <div className="bg-[#F7B928] text-black font-black uppercase tracking-widest text-xs sm:text-sm py-2.5 border-y-2 border-black shadow-xl flex">
+        <div className="bg-[#F7B928] text-black font-black uppercase tracking-widest text-xs sm:text-sm py-2 sm:py-2.5 border-y-2 border-black shadow-xl flex">
           <div className="top-tape-track whitespace-nowrap flex will-change-transform">
             <span className="inline-block px-3">{marqueeText}</span>
             <span className="inline-block px-3" aria-hidden="true">
@@ -319,30 +310,30 @@ export default function FolderReviews() {
       </div>
 
       {/* Main Review Section Body */}
-      <div className="max-w-7xl mx-auto px-6 md:px-16 pt-24 pb-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 md:px-16 pt-20 sm:pt-24 pb-14 sm:pb-20">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 pb-6 border-b border-black/10">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 sm:mb-16 pb-4 sm:pb-6 border-b border-black/10 gap-3">
           <div>
-            <span className="font-mono text-xs uppercase tracking-widest text-[#E8A317] font-bold block mb-2">
+            <span className="font-mono text-[10px] sm:text-xs uppercase tracking-widest text-[#E8A317] font-bold block mb-2">
               // 04. SOCIAL PROOF & VALIDATION
             </span>
-            <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-[#0D0D0D] leading-none">
+            <h2 className="font-serif text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-[#0D0D0D] leading-none">
               See what our clients say about us.
             </h2>
           </div>
 
-          <div className="flex items-center gap-3 mt-4 md:mt-0">
-            <span className="flex text-[#F7B928] text-base drop-shadow-sm">★★★★★</span>
-            <span className="font-mono text-xs text-[#555] uppercase font-bold tracking-wider">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <span className="flex text-[#F7B928] text-sm sm:text-base drop-shadow-sm">★★★★★</span>
+            <span className="font-mono text-[10px] sm:text-xs text-[#555] uppercase font-bold tracking-wider">
               5.0 RATING ACROSS 40+ DEPLOYMENTS
             </span>
           </div>
         </div>
 
-        {/* 1. Staggered Fan-Out Grid Container */}
+        {/* Staggered Fan-Out Grid Container */}
         <div
           ref={reviewsContainerRef}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10"
         >
           {reviewsList.map((item, index) => (
             <FolderCardItem key={item.id} item={item} index={index} />

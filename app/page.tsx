@@ -17,7 +17,7 @@ export default function Home() {
   return (
     <div
       ref={containerRef}
-      className="relative min-h-screen bg-matte-dark text-cream selection:bg-accent-vermilion selection:text-cream"
+      className="relative min-h-screen bg-matte-dark text-cream selection:bg-accent-vermilion selection:text-cream overflow-x-hidden"
     >
       {/* Floating Minimalist Navigation */}
       <Navigation />
@@ -31,61 +31,57 @@ export default function Home() {
       {/* Engineering Stack (#stack) */}
       <section
         id="stack"
-        className="py-32 px-6 md:px-12 bg-cream text-matte-dark selection:bg-accent-vermilion selection:text-cream border-t border-cream/10"
+        className="py-16 sm:py-24 md:py-32 px-4 sm:px-8 md:px-12 bg-cream text-matte-dark selection:bg-accent-vermilion selection:text-cream border-t border-cream/10"
       >
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-12 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-start">
             <div className="md:col-span-5">
-              <span className="font-mono text-xs text-accent-vermilion uppercase tracking-widest block mb-3">
+              <span className="font-mono text-[10px] sm:text-xs text-accent-vermilion uppercase tracking-widest block mb-2 sm:mb-3">
                 // 02. FULL-STACK FOUNDATION
               </span>
-              <h2 className="font-serif text-5xl md:text-6xl font-normal leading-tight text-matte-dark mb-6">
+              <h2 className="font-serif text-3xl sm:text-5xl md:text-6xl font-normal leading-tight text-matte-dark mb-4 sm:mb-6">
                 Engineered for <span className="italic">velocity</span> and zero layout jank.
               </h2>
-              <p className="font-mono text-xs text-matte-dark/60 leading-relaxed uppercase tracking-wider">
+              <p className="font-mono text-[10px] sm:text-xs text-matte-dark/60 leading-relaxed uppercase tracking-wider">
                 REACT 19 • NEXT.JS 16 • TURBOPACK • LENIS • GSAP 3 • TAILWIND CSS
               </p>
             </div>
 
-            <div className="md:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div className="p-6 bg-matte-dark text-cream border border-matte-dark">
-                <span className="font-mono text-xs text-accent-amber uppercase block mb-2">
+            <div className="md:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+              <div className="p-4 sm:p-6 bg-matte-dark text-cream border border-matte-dark">
+                <span className="font-mono text-[10px] sm:text-xs text-accent-amber uppercase block mb-1.5 sm:mb-2">
                   RUNTIMES
                 </span>
-                <h4 className="font-header font-bold text-xl mb-2">Next.js App Router</h4>
+                <h4 className="font-header font-bold text-lg sm:text-xl mb-1.5 sm:mb-2">Next.js App Router</h4>
                 <p className="text-cream/60 text-xs font-light leading-relaxed">
-                  Server components, streaming SSR, and edge middleware deployed for instant global
-                  delivery.
+                  Server components, streaming SSR, and edge middleware deployed for instant global delivery.
                 </p>
               </div>
-              <div className="p-6 bg-matte-dark text-cream border border-matte-dark">
-                <span className="font-mono text-xs text-accent-vermilion uppercase block mb-2">
+              <div className="p-4 sm:p-6 bg-matte-dark text-cream border border-matte-dark">
+                <span className="font-mono text-[10px] sm:text-xs text-accent-vermilion uppercase block mb-1.5 sm:mb-2">
                   CHOREOGRAPHY
                 </span>
-                <h4 className="font-header font-bold text-xl mb-2">GSAP + Lenis Ticker</h4>
+                <h4 className="font-header font-bold text-lg sm:text-xl mb-1.5 sm:mb-2">GSAP + Lenis Ticker</h4>
                 <p className="text-cream/60 text-xs font-light leading-relaxed">
-                  Smooth inertia unified with hardware-accelerated ScrollTrigger transforms locked
-                  at 60fps.
+                  Smooth inertia unified with hardware-accelerated ScrollTrigger transforms locked at 60fps.
                 </p>
               </div>
-              <div className="p-6 bg-matte-dark text-cream border border-matte-dark">
-                <span className="font-mono text-xs text-accent-amber uppercase block mb-2">
+              <div className="p-4 sm:p-6 bg-matte-dark text-cream border border-matte-dark">
+                <span className="font-mono text-[10px] sm:text-xs text-accent-amber uppercase block mb-1.5 sm:mb-2">
                   COMMERCE
                 </span>
-                <h4 className="font-header font-bold text-xl mb-2">Shopify Storefront</h4>
+                <h4 className="font-header font-bold text-lg sm:text-xl mb-1.5 sm:mb-2">Shopify Storefront</h4>
                 <p className="text-cream/60 text-xs font-light leading-relaxed">
-                  High-throughput GraphQL pipelines bypassing default liquid bottlenecks for
-                  instantaneous checkout flows.
+                  High-throughput GraphQL pipelines bypassing default liquid bottlenecks for instantaneous checkout flows.
                 </p>
               </div>
-              <div className="p-6 bg-matte-dark text-cream border border-matte-dark">
-                <span className="font-mono text-xs text-accent-vermilion uppercase block mb-2">
+              <div className="p-4 sm:p-6 bg-matte-dark text-cream border border-matte-dark">
+                <span className="font-mono text-[10px] sm:text-xs text-accent-vermilion uppercase block mb-1.5 sm:mb-2">
                   SYSTEM ARCHITECTURE
                 </span>
-                <h4 className="font-header font-bold text-xl mb-2">Tailwind CSS v4</h4>
+                <h4 className="font-header font-bold text-lg sm:text-xl mb-1.5 sm:mb-2">Tailwind CSS v4</h4>
                 <p className="text-cream/60 text-xs font-light leading-relaxed">
-                  Strict design tokens, custom editorial typography palettes, and zero-runtime CSS
-                  bundle sizes.
+                  Strict design tokens, custom editorial typography palettes, and zero-runtime CSS bundle sizes.
                 </p>
               </div>
             </div>

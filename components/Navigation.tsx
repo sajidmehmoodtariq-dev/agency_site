@@ -16,30 +16,30 @@ export default function Navigation() {
   }, []);
 
   return (
-    <header className="fixed top-5 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none">
+    <header className="fixed top-3 sm:top-5 left-0 right-0 z-50 flex justify-center px-3 sm:px-4 pointer-events-none">
       <nav
         aria-label="Main Navigation"
-        className={`pointer-events-auto flex items-center justify-between gap-6 md:gap-10 px-5 md:px-8 py-3.5 rounded-full transition-all duration-500 border ${
+        className={`pointer-events-auto flex items-center justify-between gap-3 sm:gap-6 md:gap-10 px-3.5 sm:px-6 md:px-8 py-2.5 sm:py-3.5 rounded-full transition-all duration-500 border max-w-[calc(100vw-1.5rem)] sm:max-w-none ${
           scrolled
-            ? "bg-matte-dark/90 backdrop-blur-xl border-cream/15 shadow-2xl shadow-black/80"
-            : "bg-matte-dark/70 backdrop-blur-lg border-cream/10"
+            ? "bg-matte-dark/95 backdrop-blur-xl border-cream/15 shadow-2xl shadow-black/80"
+            : "bg-matte-dark/80 backdrop-blur-lg border-cream/10"
         }`}
       >
         {/* Editorial Logo */}
         <button
           onClick={() => scrollTo("#hero")}
-          className="flex items-center gap-2.5 group cursor-pointer text-left"
+          className="flex items-center gap-2 group cursor-pointer text-left flex-shrink-0"
         >
-          <div className="relative w-6 h-6 rounded-full bg-cream/10 border border-cream/20 flex items-center justify-center overflow-hidden">
-            <span className="w-2 h-2 rounded-full bg-accent-vermilion group-hover:scale-125 transition-transform duration-300" />
+          <div className="relative w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-cream/10 border border-cream/20 flex items-center justify-center overflow-hidden">
+            <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-accent-vermilion group-hover:scale-125 transition-transform duration-300" />
             <div className="absolute inset-0 bg-accent-amber/20 rounded-full blur-sm opacity-0 group-hover:opacity-100 transition-opacity" />
           </div>
-          <span className="font-header font-extrabold text-sm tracking-wider text-cream uppercase">
+          <span className="font-header font-extrabold text-xs sm:text-sm tracking-wider text-cream uppercase">
             STUDIO<span className="text-accent-amber font-mono font-light ml-0.5">32</span>
           </span>
         </button>
 
-        {/* Minimalist Navigation Links */}
+        {/* Minimalist Navigation Links (Desktop) */}
         <div className="hidden lg:flex items-center gap-7 font-mono text-[11px] uppercase tracking-widest text-cream/70">
           <button
             onClick={() => scrollTo("#case-studies")}
@@ -70,10 +70,10 @@ export default function Navigation() {
         {/* High-Contrast CTA Button */}
         <button
           onClick={() => scrollTo("#audit")}
-          className="relative group overflow-hidden px-5 py-2.5 rounded-full bg-accent-vermilion text-cream font-mono text-[11px] font-semibold uppercase tracking-wider transition-all duration-300 hover:shadow-lg hover:shadow-accent-vermilion/30 active:scale-95 cursor-pointer"
+          className="relative group overflow-hidden px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full bg-accent-vermilion text-cream font-mono text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider transition-all duration-300 hover:shadow-lg hover:shadow-accent-vermilion/30 active:scale-95 cursor-pointer flex-shrink-0"
         >
-          <span className="relative z-10 flex items-center gap-1.5 text-cream group-hover:text-matte-dark transition-colors duration-300">
-            Book an Audit
+          <span className="relative z-10 flex items-center gap-1 sm:gap-1.5 text-cream group-hover:text-matte-dark transition-colors duration-300">
+            <span>Book Audit</span>
             <span className="inline-block transition-transform duration-300 group-hover:translate-x-0.5">
               →
             </span>

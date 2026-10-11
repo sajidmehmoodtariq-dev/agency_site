@@ -14,7 +14,6 @@ export default function TrustSection() {
     const ctx = gsap.context(() => {
       if (!visualRef.current || !sectionRef.current) return;
 
-      // Subtle zoom-in parallax on enter: scale 1.05 -> 1
       gsap.fromTo(
         visualRef.current,
         {
@@ -44,22 +43,22 @@ export default function TrustSection() {
     <section
       ref={sectionRef}
       id="narrative-anchor"
-      className="relative w-full py-28 px-6 md:px-16 bg-[#0D0D0D] text-white border-t border-white/10 select-none overflow-hidden"
+      className="relative w-full py-16 sm:py-24 md:py-28 px-4 sm:px-8 md:px-16 bg-[#0D0D0D] text-white border-t border-white/10 select-none overflow-hidden"
     >
       <div className="max-w-7xl mx-auto">
         {/* Split Typographic Header */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-end mb-16 pb-8 border-b border-white/10">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 items-end mb-10 sm:mb-16 pb-6 sm:pb-8 border-b border-white/10">
           <div className="md:col-span-8">
-            <span className="font-mono text-xs uppercase tracking-widest text-[#F7B928] font-bold block mb-3">
+            <span className="font-mono text-[10px] sm:text-xs uppercase tracking-widest text-[#F7B928] font-bold block mb-2 sm:mb-3">
               // 03.5 THE MARKET DIVIDE
             </span>
-            <h2 className="font-serif text-5xl sm:text-6xl md:text-7xl font-bold text-white tracking-tight leading-none">
+            <h2 className="font-serif text-3xl sm:text-5xl md:text-7xl font-bold text-white tracking-tight leading-none">
               Stand out from the noise...
             </h2>
           </div>
 
           <div className="md:col-span-4">
-            <p className="font-mono text-xs sm:text-sm text-white/60 uppercase tracking-wider leading-relaxed border-l-2 border-[#F7B928] pl-4">
+            <p className="font-mono text-xs sm:text-sm text-white/60 uppercase tracking-wider leading-relaxed border-l-2 border-[#F7B928] pl-3 sm:pl-4">
               Traditional agency models: bloated retainers & non-converting templates.
               <span className="text-[#F7B928] block mt-1 font-bold">
                 Our model: purpose-built commerce code.
@@ -68,17 +67,17 @@ export default function TrustSection() {
           </div>
         </div>
 
-        {/* Visual Asset: Wide Monochrome Crowd Graphic with Single Glowing Amber Figure */}
+        {/* Visual Asset */}
         <div
           ref={visualRef}
-          className="relative w-full aspect-[16/8] max-h-[500px] rounded-3xl bg-[#141414] border-2 border-white/10 shadow-2xl overflow-hidden flex items-center justify-center p-6 md:p-12 will-change-transform"
+          className="relative w-full aspect-[4/3] sm:aspect-[16/10] md:aspect-[16/8] max-h-[500px] rounded-2xl sm:rounded-3xl bg-[#141414] border-2 border-white/10 shadow-2xl overflow-hidden flex items-center justify-center p-4 sm:p-8 md:p-12 will-change-transform"
         >
           {/* Background Ambient Radial Atmosphere */}
           <div className="absolute inset-0 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:28px_28px] opacity-[0.04]" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D0D] via-transparent to-transparent pointer-events-none" />
 
-          {/* Glowing Aura for the Center Standout Figure */}
-          <div className="absolute w-72 h-72 rounded-full bg-[#F7B928]/20 blur-3xl pointer-events-none animate-pulse" />
+          {/* Glowing Aura */}
+          <div className="absolute w-48 sm:w-72 h-48 sm:h-72 rounded-full bg-[#F7B928]/20 blur-3xl pointer-events-none animate-pulse" />
 
           {/* Crowd Silhouette Graphic (SVG) */}
           <svg
@@ -87,7 +86,6 @@ export default function TrustSection() {
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            {/* Background Generic Crowd Rows (Monochrome Grayscale) */}
             <g opacity="0.3" fill="#2A2A2A">
               <circle cx="80" cy="180" r="24" />
               <path d="M40 250 C40 220, 120 220, 120 250 Z" />
@@ -107,7 +105,6 @@ export default function TrustSection() {
               <path d="M880 250 C880 220, 960 220, 960 250 Z" />
             </g>
 
-            {/* Midground Monochromatic Silhouettes */}
             <g opacity="0.55" fill="#3D3D3D">
               <circle cx="120" cy="270" r="28" />
               <path d="M75 350 C75 315, 165 315, 165 350 Z" />
@@ -123,7 +120,6 @@ export default function TrustSection() {
               <path d="M835 350 C835 315, 925 315, 925 350 Z" />
             </g>
 
-            {/* Foreground Crowd Silhouettes */}
             <g opacity="0.75" fill="#1F1F1F">
               <circle cx="270" cy="360" r="34" />
               <path d="M215 440 C215 395, 325 395, 325 440 Z" />
@@ -135,31 +131,22 @@ export default function TrustSection() {
               <path d="M675 440 C675 395, 785 395, 785 440 Z" />
             </g>
 
-            {/* THE STANDOUT HERO FIGURE: Glowing Amber-Yellow #F7B928 with Crown / Agency Emblem */}
+            {/* Standout Figure */}
             <g id="standout-figure" className="transition-transform duration-300">
-              {/* Golden Ambient Halo */}
               <circle cx="500" cy="260" r="75" fill="#F7B928" fillOpacity="0.25" filter="blur(8px)" />
-
-              {/* Crown Emblem Above Head */}
               <path
                 d="M480 180 L490 205 L500 172 L510 205 L520 180 L520 215 L480 215 Z"
                 fill="#F7B928"
                 stroke="#0D0D0D"
                 strokeWidth="2"
               />
-
-              {/* Radiant Figure Head */}
               <circle cx="500" cy="240" r="38" fill="#F7B928" stroke="#0D0D0D" strokeWidth="3" />
-
-              {/* Radiant Figure Torso */}
               <path
                 d="M435 365 C435 295, 565 295, 565 365 Z"
                 fill="#F7B928"
                 stroke="#0D0D0D"
                 strokeWidth="3"
               />
-
-              {/* Chest Medallion / Star Insignia */}
               <circle cx="500" cy="330" r="12" fill="#0D0D0D" />
               <polygon
                 points="500,322 503,328 509,329 505,333 506,339 500,336 494,339 495,333 491,329 497,328"
@@ -168,16 +155,16 @@ export default function TrustSection() {
             </g>
           </svg>
 
-          {/* Standout Distinction Tags Overlay */}
-          <div className="absolute top-6 left-6 hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50 font-mono text-[10px] uppercase">
+          {/* Standout Distinction Tags */}
+          <div className="absolute top-4 sm:top-6 left-4 sm:left-6 hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50 font-mono text-[10px] uppercase">
             <span>98% OF STORES: GENERIC LIQUID THEMES</span>
           </div>
 
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 px-4 py-2 rounded-full bg-[#F7B928] text-black font-mono text-xs font-black uppercase tracking-wider border-2 border-black shadow-2xl">
-            <span>★ YOUR STORE: BESPOKE HIGH-VELOCITY ENGINE</span>
+          <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-[#F7B928] text-black font-mono text-[10px] sm:text-xs font-black uppercase tracking-wider border-2 border-black shadow-2xl max-w-[90vw] truncate">
+            <span>⚡ YOUR STORE: BESPOKE HIGH-VELOCITY ENGINE</span>
           </div>
 
-          <div className="absolute top-6 right-6 hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50 font-mono text-[10px] uppercase">
+          <div className="absolute top-4 sm:top-6 right-4 sm:right-6 hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50 font-mono text-[10px] uppercase">
             <span>ZERO TEMPLATE BLOAT</span>
           </div>
         </div>
